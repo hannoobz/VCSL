@@ -1,0 +1,19 @@
+{
+  "skip_n": 30,
+  "results": {
+    "val": {
+      "split": "val",
+      "videos": 57,
+      "frames": 37259,
+      "mismatches": [],
+      "errors": []
+    },
+    "test": {
+      "split": "test",
+      "videos": 57,
+      "frames": 33277,
+      "mismatches": [],
+      "errors": []
+    }
+  }
+}
