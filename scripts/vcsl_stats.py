@@ -2,6 +2,7 @@ import importlib.util
 import json
 import sys
 from pathlib import Path
+from scipy.stats import wilcoxon
 
 import numpy as np
 import pandas as pd
@@ -58,7 +59,6 @@ def extract_per_video(pred_file: Path, anno_file: Path, dataset_dir: Path,
 
 def paired_test(df_a: pd.DataFrame, df_b: pd.DataFrame, metric: str = "f1",
                  n_boot: int = 10000, seed: int = 42) -> dict:
-    from scipy.stats import wilcoxon
 
     common = df_a.index.intersection(df_b.index)
     if len(common) == 0:
