@@ -7,6 +7,8 @@
 #   make vta       isc  pred TN
 #   make vta       isc  gt   SPD
 #   make eval      isc  gt   SPD
+#   make pervideo  isc  gt   SPD    (per-video precision/recall/F1 CSV for ONE scenario)
+#   make sigtest   isc  SPD         (no-crop vs gt-crop vs pred-crop, paired Wilcoxon)
 
 # BACKBONE  = isc | dino
 # MODE      = full | pred | gt      (full = uncropped, pred/gt = pip_only crops)
@@ -20,6 +22,7 @@ SPLIT      ?= test
 BACKBONE := $(word 2,$(MAKECMDGOALS))
 MODE     := $(word 3,$(MAKECMDGOALS))
 METHOD   := $(word 4,$(MAKECMDGOALS))
+SIG_METHOD := $(word 3,$(MAKECMDGOALS))
 
 $(BACKBONE) $(MODE) $(METHOD):
 	@:
@@ -53,7 +56,7 @@ define require_method
 	fi
 endef
 
-.PHONY: extract simmap simmapviz vta eval
+.PHONY: extract simmap simmapviz vta eval pervideo sigtest
 
 extract:
 	$(call require_backbone_mode)
@@ -89,3 +92,22 @@ eval:
 	python scripts/vcsl_run_video_eval.py \
 		--pred-file $(ROOT)/vta_out/$(BACKBONE)/$(MODE_PATH)/$(RESULT_FILE) \
 		--split $(SPLIT)
+
+pervideo:
+	$(call require_backbone_mode)
+	$(call require_method)
+	python scripts/extract_per_video_pvcd.py \
+		--anno-file $(DATASET)/gt_annotations.json \
+		--dataset $(DATASET) \
+		--split $(SPLIT) \
+		--pred-file $(ROOT)/vta_out/$(BACKBONE)/$(MODE_PATH)/$(RESULT_FILE) \
+		--out $(ROOT)/results/pervideo/$(BACKBONE)_$(MODE)_$(METHOD)_$(SPLIT).csv
+
+sigtest:
+	@if [ -z "$(BACKBONE)" ] || [ -z "$(SIG_METHOD)" ]; then \
+		echo "Usage: make sigtest {isc|dino} {TN|SPD}"; exit 1; \
+	fi
+	python scripts/run_significance.py \
+		--backbone $(BACKBONE) --method $(SIG_METHOD) --split $(SPLIT) \
+		--root $(ROOT) --dataset $(DATASET) \
+		--out-dir $(ROOT)/results/sigtest
