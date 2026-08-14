@@ -9,6 +9,8 @@
 #   make eval      isc  gt   SPD
 #   make pervideo  isc  gt   SPD    (per-video precision/recall/F1 CSV for ONE scenario)
 #   make sigtest   isc  SPD         (no-crop vs gt-crop vs pred-crop, paired Wilcoxon)
+#   make normtest  isc  SPD         (no-crop vs pred-crop, gt-crop vs pred-crop, Shapiro-Wilk on the F1 diffs)
+#   make normtest-all               (normtest for all 4 backbone/method combos, 8 tests total)
 
 # BACKBONE  = isc | dino
 # MODE      = full | pred | gt      (full = uncropped, pred/gt = pip_only crops)
@@ -56,7 +58,7 @@ define require_method
 	fi
 endef
 
-.PHONY: extract simmap simmapviz vta eval pervideo sigtest
+.PHONY: extract simmap simmapviz vta eval pervideo sigtest normtest normtest-all
 
 extract:
 	$(call require_backbone_mode)
@@ -111,3 +113,17 @@ sigtest:
 		--backbone $(BACKBONE) --method $(SIG_METHOD) --split $(SPLIT) \
 		--root $(ROOT) --dataset $(DATASET) \
 		--out-dir $(ROOT)/results/sigtest
+
+normtest:
+	@if [ -z "$(BACKBONE)" ] || [ -z "$(SIG_METHOD)" ]; then \
+		echo "Usage: make normtest {isc|dino} {TN|SPD}"; exit 1; \
+	fi
+	python scripts/run_normality.py \
+		--backbone $(BACKBONE) --method $(SIG_METHOD) --split $(SPLIT) \
+		--root $(ROOT) --dataset $(DATASET) \
+		--out-dir $(ROOT)/results/normtest
+
+normtest-all:
+	python scripts/run_normality.py --all --split $(SPLIT) \
+		--root $(ROOT) --dataset $(DATASET) \
+		--out-dir $(ROOT)/results/normtest

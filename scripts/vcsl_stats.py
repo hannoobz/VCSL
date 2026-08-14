@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+from scipy.stats import shapiro
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 
@@ -88,4 +89,32 @@ def paired_test(df_a: pd.DataFrame, df_b: pd.DataFrame, metric: str = "f1",
         "wilcoxon_stat": float(stat) if stat == stat else None,
         "p_value": float(p),
         "significant_at_0.05": bool(p < 0.05),
+    }
+
+
+def normality_test(df_a: pd.DataFrame, df_b: pd.DataFrame, metric: str = "f1") -> dict:
+    common = df_a.index.intersection(df_b.index)
+    if len(common) == 0:
+        raise ValueError("no overlapping pairs between the two scenarios -- "
+                          "did they come from the same split/pair_file?")
+
+    a = df_a.loc[common, metric].to_numpy()
+    b = df_b.loc[common, metric].to_numpy()
+    diffs = b - a
+
+    if len(diffs) < 3:
+        raise ValueError(f"shapiro-wilk needs at least 3 paired samples, got {len(diffs)}")
+
+    if np.allclose(diffs, diffs[0]):
+        stat, p = float("nan"), float("nan")
+    else:
+        stat, p = shapiro(diffs)
+
+    return {
+        "n": len(common),
+        "mean_diff": float(diffs.mean()),
+        "std_diff": float(diffs.std(ddof=1)),
+        "shapiro_stat": float(stat) if stat == stat else None,
+        "p_value": float(p) if p == p else None,
+        "normal_at_0.05": bool(p >= 0.05) if p == p else None,
     }
