@@ -142,3 +142,8 @@ cython_debug/
 dataset/images/
 dataset/labels/
 dataset/labels_pred/
+
+output/crops/
+output/features/
+output/simmaps/
+output/simmaps_png/
