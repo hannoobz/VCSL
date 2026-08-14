@@ -1,0 +1,46 @@
+{
+  "backbone": "dino",
+  "method": "TN",
+  "split": "test",
+  "comparisons": [
+    {
+      "n": 57,
+      "mean_a": 0.25675615669394114,
+      "mean_b": 0.7762856681325624,
+      "mean_diff": 0.5195295114386211,
+      "ci_lo": 0.42357328775369063,
+      "ci_hi": 0.6136533561040702,
+      "wilcoxon_stat": 12.0,
+      "p_value": 1.0466620052186515e-09,
+      "significant_at_0.05": true,
+      "scenario_a": "no_crop",
+      "scenario_b": "gt_crop"
+    },
+    {
+      "n": 57,
+      "mean_a": 0.25675615669394114,
+      "mean_b": 0.764654991563764,
+      "mean_diff": 0.5078988348698228,
+      "ci_lo": 0.41230331837274026,
+      "ci_hi": 0.6015271957047822,
+      "wilcoxon_stat": 8.0,
+      "p_value": 1.2265120486349766e-09,
+      "significant_at_0.05": true,
+      "scenario_a": "no_crop",
+      "scenario_b": "pred_crop"
+    },
+    {
+      "n": 57,
+      "mean_a": 0.7762856681325624,
+      "mean_b": 0.764654991563764,
+      "mean_diff": -0.011630676568798346,
+      "ci_lo": -0.0401387192555847,
+      "ci_hi": 0.009122068504347915,
+      "wilcoxon_stat": 280.0,
+      "p_value": 0.566461891888309,
+      "significant_at_0.05": false,
+      "scenario_a": "gt_crop",
+      "scenario_b": "pred_crop"
+    }
+  ]
+}
