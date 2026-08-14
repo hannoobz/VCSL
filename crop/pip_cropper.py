@@ -35,7 +35,7 @@ def crop_frame(img: np.ndarray, boxes: List[Box], mode: str) -> Optional[np.ndar
             crop = img[bp.y1:bp.y2, bp.x1:bp.x2]
             if crop.size == 0:
                 return img
-            return cv2.resize(crop, (w, h), interpolation=cv2.INTER_LINEAR)
+            return crop
         out = np.full_like(img, CROP.fill_value)
         for b in boxes:
             out[b.y1:b.y2, b.x1:b.x2] = img[b.y1:b.y2, b.x1:b.x2]
