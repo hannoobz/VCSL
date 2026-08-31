@@ -147,3 +147,6 @@ output/crops/
 output/features/
 output/simmaps/
 output/simmaps_png/
+
+
+*.jpg
